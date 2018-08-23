@@ -1,0 +1,25 @@
+{
+  "name": "payfast",
+  "version": "1.0.0",
+  "description": "Projeto do curso de API da Alura.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LinuxUserIRS/Alura-Payfast.git"
+  },
+  "author": "Italo Soares",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LinuxUserIRS/Alura-Payfast/issues"
+  },
+  "homepage": "https://github.com/LinuxUserIRS/Alura-Payfast#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "consign": "^0.1.6",
+    "express": "^4.16.3",
+    "nodemon": "^1.18.3"
+  }
+}
