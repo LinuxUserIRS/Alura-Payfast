@@ -1,7 +1,7 @@
 {
     "valor": 10.98,
     "moeda": "BRL",
-    "forma_de_pagamento": "",
+    "forma_de_pagamento": "payfast",
     "status": "",
     "data": ""
 }
