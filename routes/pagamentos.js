@@ -1,9 +1,11 @@
 module.exports = function(app){
+    //Rota que recebe uma requisição GET para emitir um pagamento
     app.get('/pagamentos', function(req, res){
         console.log("Recebido!");
         res.send("OK");
     });
 
+    //Rota que recebe uma requisição POST para receber, validar e registrar um pagamento
     app.post('/pagamentos/pagamento', function(req, res){
         //Testando campos do JSON
         req.assert("forma_de_pagamento", "Forma de pagamento é obrigatório").notEmpty();
@@ -26,7 +28,10 @@ module.exports = function(app){
             if (err) {
                 res.status(500).json("Erro interno no servidor");
             }else{
+                //Informando rota onde o pagamento está localizado.
+                //A rota é /pagamentos/pagamento/ID do pagamento, que é concatenado pela função result.inserId
                 res.location('/pagamentos/pagamento' + result.insertId);
+                //Devolvendo código de sucesso e o JSON do pagamento
                 res.status(201).json(pagamento);
 
             }
