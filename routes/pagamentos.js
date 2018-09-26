@@ -5,6 +5,43 @@ module.exports = function(app){
         res.send("OK");
     });
 
+    app.put('/pagamentos/pagamento/:id', function(req, res){
+        var pagamento={};
+        var id = req.params.id;
+        pagamento.id=id;
+        pagamento.status='CONFIRMADO';
+        //Criando conexão com o DB
+        var DBconnection = app.persistencia.connectionFactory();
+        var pagamentoDAO = new app.persistencia.PagamentoDAO(DBconnection);
+        pagamentoDAO.atualiza(pagamento, function(err){
+            if(err){
+                res.status(500).send(err);
+                return;
+            }
+            res.send(pagamento);
+            
+
+        });
+
+    });
+
+    app.delete('/pagamentos/pagamento/:id', function(req, res){
+        var pagamento={};
+        var id = req.params.id;
+        pagamento.id=id;
+        pagamento.status='CONFIRMADO';
+        //Criando conexão com o DB
+        var DBconnection = app.persistencia.connectionFactory();
+        var pagamentoDAO = new app.persistencia.PagamentoDAO(DBconnection);
+        pagamentoDAO.deleta(pagamento.id, function(err){
+            if(err){
+                res.status(500).send(err);
+                return;
+            }
+            res.send(pagamento);
+        })
+    });
+
     //Rota que recebe uma requisição POST para receber, validar e registrar um pagamento
     app.post('/pagamentos/pagamento', function(req, res){
         //Testando campos do JSON
