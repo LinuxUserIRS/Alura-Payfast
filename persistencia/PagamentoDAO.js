@@ -18,9 +18,9 @@ PagamentoDAO.prototype.buscaPorId = function (id,callback) {
     this._connection.query("select * from pagamentos where id = ?",[id],callback);
 }
 
-PagamentoDAO.prototype.deleta = function(id, callback){
+/* PagamentoDAO.prototype.deleta = function(id, callback){
     this._connection.query("delete from pagamentos where id=? ", [id], callback);
-}
+} */
 
 module.exports = function(){
     return PagamentoDAO;

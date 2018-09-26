@@ -29,16 +29,16 @@ module.exports = function(app){
         var pagamento={};
         var id = req.params.id;
         pagamento.id=id;
-        pagamento.status='CONFIRMADO';
+        pagamento.status='CANCELADO';
         //Criando conexão com o DB
         var DBconnection = app.persistencia.connectionFactory();
         var pagamentoDAO = new app.persistencia.PagamentoDAO(DBconnection);
-        pagamentoDAO.deleta(pagamento.id, function(err){
+        pagamentoDAO.atualiza(pagamento, function(err){
             if(err){
                 res.status(500).send(err);
                 return;
             }
-            res.send(pagamento);
+            res.status(204).send(pagamento);
         })
     });
 
@@ -55,7 +55,7 @@ module.exports = function(app){
         }
         var pagamento = req.body;
         //Setando data e status do pagamento
-        pagamento.status="recebido";
+        pagamento.status="RECEBIDO";
         pagamento.data= new Date;
         //Criando conexão com o DB
         var DBconnection = app.persistencia.connectionFactory();
@@ -65,11 +65,28 @@ module.exports = function(app){
             if (err) {
                 res.status(500).json("Erro interno no servidor");
             }else{
+                pagamento.id=result.insertId;
                 //Informando rota onde o pagamento está localizado.
                 //A rota é /pagamentos/pagamento/ID do pagamento, que é concatenado pela função result.inserId
-                res.location('/pagamentos/pagamento' + result.insertId);
+                res.location('/pagamentos/pagamento' + pagamento.id);
+                var response = {
+                    dados_do_pagamento: pagamento,
+                    //Definindo possíveis ações que podem ser tomadas a partir daqui
+                    links: [
+                        {
+                            href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
+                            rel: 'CONFIRMAR',
+                            method: 'PUT'
+                        },
+                        {
+                            href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
+                            rel: 'CANCELAR',
+                            method: 'DELETE'
+                        }
+                    ]
+                }
                 //Devolvendo código de sucesso e o JSON do pagamento
-                res.status(201).json(pagamento);
+                res.status(201).json(response);
 
             }
         });
