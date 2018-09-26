@@ -45,15 +45,15 @@ module.exports = function(app){
     //Rota que recebe uma requisição POST para receber, validar e registrar um pagamento
     app.post('/pagamentos/pagamento', function(req, res){
         //Testando campos do JSON
-        req.assert("forma_de_pagamento", "Forma de pagamento é obrigatório").notEmpty();
-        req.assert("valor", "Preencha um valor válido").notEmpty().isFloat();
+        req.assert("pagamento.forma_de_pagamento", "Forma de pagamento é obrigatório").notEmpty();
+        req.assert("pagamento.valor", "Preencha um valor válido").notEmpty().isFloat();
         //Se houver erros no JSON, retorna erro e loga no servidor
         if (req.validationErrors()){
             console.log("Erros na requisição");
             res.status(400).send(req.validationErrors());
             return;
         }
-        var pagamento = req.body;
+        var pagamento = req.body["pagamento"];
         //Setando data e status do pagamento
         pagamento.status="RECEBIDO";
         pagamento.data= new Date;
@@ -69,6 +69,10 @@ module.exports = function(app){
                 //Informando rota onde o pagamento está localizado.
                 //A rota é /pagamentos/pagamento/ID do pagamento, que é concatenado pela função result.inserId
                 res.location('/pagamentos/pagamento' + pagamento.id);
+                if(pagamento.forma_de_pagamento=='cartao'){
+                    var cartao = req.body["cartao"];
+                    return;
+                }
                 var response = {
                     dados_do_pagamento: pagamento,
                     //Definindo possíveis ações que podem ser tomadas a partir daqui
