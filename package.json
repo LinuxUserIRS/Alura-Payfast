@@ -24,6 +24,7 @@
     "mysql": "^2.16.0",
     "nodemon": "^1.18.4",
     "restify": "^7.2.1",
-    "restify-clients": "^2.5.2"
+    "restify-clients": "^2.5.2",
+    "soap": "^0.25.0"
   }
 }
