@@ -8,7 +8,7 @@ module.exports=function(){
     app.use(bodyParser.urlencoded({extended:true}));
     app.use(bodyParser.json());
     app.use(express_validator());
-    consign.include('routes').then('persistencia').into(app);
+    consign.include('routes').then('persistencia').then('servicos').into(app);
     return app;
 };
 

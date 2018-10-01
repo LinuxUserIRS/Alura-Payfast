@@ -3,7 +3,7 @@ var mysql  = require('mysql');
 function createDBConnection() {
     return mysql.createConnection({
         host: 'localhost',
-        user: 'italo',
+        user: 'root',
         password: 'maxami',
         database: 'payfast'
     });

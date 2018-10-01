@@ -71,26 +71,30 @@ module.exports = function(app){
                 res.location('/pagamentos/pagamento' + pagamento.id);
                 if(pagamento.forma_de_pagamento=='cartao'){
                     var cartao = req.body["cartao"];
+                    clienteCartoes.autoriza(cartao);
+                    res.status(201).json(cartao);
                     return;
+                }else{
+
+                    var response = {
+                        dados_do_pagamento: pagamento,
+                        //Definindo possíveis ações que podem ser tomadas a partir daqui
+                        links: [
+                            {
+                                href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
+                                rel: 'CONFIRMAR',
+                                method: 'PUT'
+                            },
+                            {
+                                href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
+                                rel: 'CANCELAR',
+                                method: 'DELETE'
+                            }
+                        ]
+                    }
+                    //Devolvendo código de sucesso e o JSON do pagamento
+                    res.status(201).json(response);
                 }
-                var response = {
-                    dados_do_pagamento: pagamento,
-                    //Definindo possíveis ações que podem ser tomadas a partir daqui
-                    links: [
-                        {
-                            href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
-                            rel: 'CONFIRMAR',
-                            method: 'PUT'
-                        },
-                        {
-                            href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
-                            rel: 'CANCELAR',
-                            method: 'DELETE'
-                        }
-                    ]
-                }
-                //Devolvendo código de sucesso e o JSON do pagamento
-                res.status(201).json(response);
 
             }
         });
