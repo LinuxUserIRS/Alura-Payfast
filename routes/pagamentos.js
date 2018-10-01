@@ -55,7 +55,7 @@ module.exports = function(app){
         }
         var pagamento = req.body["pagamento"];
         //Setando data e status do pagamento
-        pagamento.status="RECEBIDO";
+        pagamento.status="CRIADO";
         pagamento.data= new Date;
         //Criando conexão com o DB
         var DBconnection = app.persistencia.connectionFactory();
@@ -63,41 +63,42 @@ module.exports = function(app){
         //Salvando e enviando resposta
         pagamentoDAO.salva(pagamento, function(err, result){
             if (err) {
-                res.status(500).json("Erro interno no servidor");
+                res.status(500).send(err);
             }else{
                 pagamento.id=result.insertId;
-                //Informando rota onde o pagamento está localizado.
-                //A rota é /pagamentos/pagamento/ID do pagamento, que é concatenado pela função result.inserId
-                res.location('/pagamentos/pagamento' + pagamento.id);
+                
                 if(pagamento.forma_de_pagamento=='cartao'){
                     var cartao = req.body["cartao"];
                     var clienteCartoes = new app.servicos.clienteCartoes();
                     clienteCartoes.autoriza(cartao, function(erro, request, response, retorno){
                         if(erro){
                             console.log(erro);
-                            res.status(500).send(erro);
+                            res.status(400).send(erro);
                             return;
                         }
+                        //Informando rota onde o pagamento está localizado.
+                        //A rota é /pagamentos/pagamento/ID do pagamento, que é concatenado pela função result.inserId
+                        res.location('/pagamentos/pagamento' + pagamento.id);
+                        var response = {
+                            dados_do_pagamento: pagamento,
+                            cartao: cartao,
+                            //Definindo possíveis ações que podem ser tomadas a partir daqui
+                            links: [
+                                {
+                                    href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
+                                    rel: 'CONFIRMAR',
+                                    method: 'PUT'
+                                },
+                                {
+                                    href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
+                                    rel: 'CANCELAR',
+                                    method: 'DELETE'
+                                }
+                            ]
+                        }
+                        res.status(201).json(response);
+                        return;
                     });
-                    var response = {
-                        dados_do_pagamento: pagamento,
-                        cartao: cartao,
-                        //Definindo possíveis ações que podem ser tomadas a partir daqui
-                        links: [
-                            {
-                                href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
-                                rel: 'CONFIRMAR',
-                                method: 'PUT'
-                            },
-                            {
-                                href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
-                                rel: 'CANCELAR',
-                                method: 'DELETE'
-                            }
-                        ]
-                    }
-                    res.status(201).json(response);
-                    return;
                 }else{
 
                     var response = {
