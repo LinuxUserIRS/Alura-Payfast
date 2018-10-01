@@ -71,8 +71,32 @@ module.exports = function(app){
                 res.location('/pagamentos/pagamento' + pagamento.id);
                 if(pagamento.forma_de_pagamento=='cartao'){
                     var cartao = req.body["cartao"];
-                    clienteCartoes.autoriza(cartao);
-                    res.status(201).json(cartao);
+                    var clienteCartoes = new app.servicos.clienteCartoes();
+                    clienteCartoes.autoriza(cartao, function(erro, request, response, retorno){
+                        if(erro){
+                            console.log(erro);
+                            res.status(500).send(erro);
+                            return;
+                        }
+                    });
+                    var response = {
+                        dados_do_pagamento: pagamento,
+                        cartao: cartao,
+                        //Definindo possíveis ações que podem ser tomadas a partir daqui
+                        links: [
+                            {
+                                href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
+                                rel: 'CONFIRMAR',
+                                method: 'PUT'
+                            },
+                            {
+                                href: 'http://localhost:3000/pagamentos/pagamento/'+pagamento.id,
+                                rel: 'CANCELAR',
+                                method: 'DELETE'
+                            }
+                        ]
+                    }
+                    res.status(201).json(response);
                     return;
                 }else{
 
