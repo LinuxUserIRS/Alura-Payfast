@@ -42,6 +42,22 @@ module.exports = function(app){
         })
     });
 
+    app.get('/pagamentos/pagamento/:id', function(req, res){
+        var id=req.params.id;
+        console.log("Consultando status do pagamento: "+id);    
+        //Criando conexão com o DB
+        var DBconnection = app.persistencia.connectionFactory();
+        var pagamentoDAO = new app.persistencia.PagamentoDAO(DBconnection);
+        pagamentoDAO.buscaPorId(id, function(err, results){
+            if(err){
+                console.log("Erro");
+                res.status(500).send("Erro interno no servidor");
+                return;
+            }
+            res.status(201).send(results);
+        })
+    });
+
     //Rota que recebe uma requisição POST para receber, validar e registrar um pagamento
     app.post('/pagamentos/pagamento', function(req, res){
         //Testando campos do JSON
