@@ -45,17 +45,28 @@ module.exports = function(app){
     app.get('/pagamentos/pagamento/:id', function(req, res){
         var id=req.params.id;
         console.log("Consultando status do pagamento: "+id);    
-        //Criando conexão com o DB
-        var DBconnection = app.persistencia.connectionFactory();
-        var pagamentoDAO = new app.persistencia.PagamentoDAO(DBconnection);
-        pagamentoDAO.buscaPorId(id, function(err, results){
-            if(err){
-                console.log("Erro");
-                res.status(500).send("Erro interno no servidor");
+        var memcachedClient = app.servicos.cacheClient();
+        memcachedClient.get('pagamento-'+id, function(err, result){
+            console.log(result);
+            if(err || !result){
+                console.log("MISS - Pagamento não encontrado");
+                //Criando conexão com o DB
+                var DBconnection = app.persistencia.connectionFactory();
+                var pagamentoDAO = new app.persistencia.PagamentoDAO(DBconnection);
+                pagamentoDAO.buscaPorId(id, function(err, results){
+                    if(err){
+                        console.log("Erro");
+                        res.status(500).send("Erro interno no servidor");
+                        return;
+                    }
+                    res.status(201).send(results);
+                })
+            }else{
+                console.log("HIT - Encontrado: "+result);
+                res.status(201).send(result);
                 return;
             }
-            res.status(201).send(results);
-        })
+        });
     });
 
     //Rota que recebe uma requisição POST para receber, validar e registrar um pagamento
@@ -82,7 +93,10 @@ module.exports = function(app){
                 res.status(500).send(err);
             }else{
                 pagamento.id=result.insertId;
-                
+                var memcachedClient = app.servicos.cacheClient();
+                memcachedClient.set('pagamento-' + pagamento.id, pagamento,60000, function(erro){
+                  console.log('nova chave adicionada ao cache: pagamento-' + pagamento.id);
+                });
                 if(pagamento.forma_de_pagamento=='cartao'){
                     var cartao = req.body["cartao"];
                     var clienteCartoes = new app.servicos.clienteCartoes();
