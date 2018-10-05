@@ -1,0 +1,6 @@
+{"message":"Consultando status do pagamento: 19","level":"info"}
+{"message":{"forma_de_pagamento":"payfast","valor":72,"moeda":"BRL","descricao":"criando um pagamento","status":"CRIADO","data":"2018-10-05T17:16:02.731Z","id":19},"level":"info"}
+{"message":"HIT - Encontrado: {\"forma_de_pagamento\":\"payfast\",\"valor\":72,\"moeda\":\"BRL\",\"descricao\":\"criando um pagamento\",\"status\":\"CRIADO\",\"data\":\"2018-10-05T17:16:02.731Z\",\"id\":19}","level":"info"}
+{"message":"Consultando status do pagamento: 19","level":"info"}
+{"message":{"forma_de_pagamento":"payfast","valor":72,"moeda":"BRL","descricao":"criando um pagamento","status":"CRIADO","data":"2018-10-05T17:16:02.731Z","id":19},"level":"info"}
+{"message":"HIT - Encontrado: {\"forma_de_pagamento\":\"payfast\",\"valor\":72,\"moeda\":\"BRL\",\"descricao\":\"criando um pagamento\",\"status\":\"CRIADO\",\"data\":\"2018-10-05T17:16:02.731Z\",\"id\":19}","level":"info"}

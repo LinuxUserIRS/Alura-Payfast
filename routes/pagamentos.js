@@ -1,7 +1,8 @@
+var logger=require('../servicos/logger.js');
 module.exports = function(app){
     //Rota que recebe uma requisição GET para emitir um pagamento
     app.get('/pagamentos', function(req, res){
-        console.log("Recebido!");
+        logger.info("Recebido!");
         res.send("OK");
     });
 
@@ -44,25 +45,25 @@ module.exports = function(app){
 
     app.get('/pagamentos/pagamento/:id', function(req, res){
         var id=req.params.id;
-        console.log("Consultando status do pagamento: "+id);    
+        logger.info("Consultando status do pagamento: "+id);    
         var memcachedClient = app.servicos.cacheClient();
         memcachedClient.get('pagamento-'+id, function(err, result){
-            console.log(result);
+            logger.info(result);
             if(err || !result){
-                console.log("MISS - Pagamento não encontrado");
+                logger.info("MISS - Pagamento não encontrado");
                 //Criando conexão com o DB
                 var DBconnection = app.persistencia.connectionFactory();
                 var pagamentoDAO = new app.persistencia.PagamentoDAO(DBconnection);
                 pagamentoDAO.buscaPorId(id, function(err, results){
                     if(err){
-                        console.log("Erro");
+                        logger.info("Erro");
                         res.status(500).send("Erro interno no servidor");
                         return;
                     }
                     res.status(201).send(results);
                 })
             }else{
-                console.log("HIT - Encontrado: "+result);
+                logger.info("HIT - Encontrado: "+JSON.stringify(result));
                 res.status(201).send(result);
                 return;
             }
@@ -76,7 +77,7 @@ module.exports = function(app){
         req.assert("pagamento.valor", "Preencha um valor válido").notEmpty().isFloat();
         //Se houver erros no JSON, retorna erro e loga no servidor
         if (req.validationErrors()){
-            console.log("Erros na requisição");
+            logger.info("Erros na requisição");
             res.status(400).send(req.validationErrors());
             return;
         }
@@ -95,14 +96,14 @@ module.exports = function(app){
                 pagamento.id=result.insertId;
                 var memcachedClient = app.servicos.cacheClient();
                 memcachedClient.set('pagamento-' + pagamento.id, pagamento,60000, function(erro){
-                  console.log('nova chave adicionada ao cache: pagamento-' + pagamento.id);
+                  logger.info('nova chave adicionada ao cache: pagamento-' + pagamento.id);
                 });
                 if(pagamento.forma_de_pagamento=='cartao'){
                     var cartao = req.body["cartao"];
                     var clienteCartoes = new app.servicos.clienteCartoes();
                     clienteCartoes.autoriza(cartao, function(erro, request, response, retorno){
                         if(erro){
-                            console.log(erro);
+                            logger.info(erro);
                             res.status(400).send(erro);
                             return;
                         }
