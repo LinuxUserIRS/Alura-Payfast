@@ -1,4 +1,6 @@
-{"message":"Consultando status do pagamento: 19","level":"info"}
-{"message":{"forma_de_pagamento":"payfast","valor":72,"moeda":"BRL","descricao":"criando um pagamento","status":"CRIADO","data":"2018-10-05T17:16:02.731Z","id":19},"level":"info"}
-{"message":"HIT - Encontrado: {\"forma_de_pagamento\":\"payfast\",\"valor\":72,\"moeda\":\"BRL\",\"descricao\":\"criando um pagamento\",\"status\":\"CRIADO\",\"data\":\"2018-10-05T17:16:02.731Z\",\"id\":19}","level":"info"}
-{"message":"127.0.0.1 - - [05/Oct/2018:17:35:37 +0000] \"GET /pagamentos/pagamento/19 HTTP/1.1\" 201 152\n","level":"info"}
+{"message":"Thread 2571 iniciada","level":"info"}
+{"message":"Thread 2569 iniciada","level":"info"}
+{"message":"Thread 2572 iniciada","level":"info"}
+{"message":"Thread 2570 iniciada","level":"info"}
+{"message":"Thread 2570 encerrada","level":"info"}
+{"message":"Thread 2580 iniciada","level":"info"}
